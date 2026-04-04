@@ -1,7 +1,13 @@
 import { GoogleGenAI } from "@google/genai";
 
+const apiKey = process.env.GEMINI_API_KEY;
+
+if (!apiKey) {
+  throw new Error("GEMINI_API_KEY não definida");
+}
+
 const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY!,
+  apiKey,
 });
 
 export async function POST(request: Request) {
@@ -9,6 +15,8 @@ export async function POST(request: Request) {
   const questao = body.questao;
   const tema = body.tema;
 
+
+  
   const response = await ai.models.generateContent({
     model: "models/gemini-3-flash-preview",
     contents: [
