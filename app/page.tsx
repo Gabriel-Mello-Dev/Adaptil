@@ -69,65 +69,88 @@ if (escolhida===correta){
 }
 
   return (
-    <div className="bg-gray-600 h-[120vh]">
-      <h1 className="text-[3rem] text-white">Adaptil</h1>
-      <img
-        className="h-30"
-        src="https://images.vexels.com/media/users/3/251466/isolated/preview/fafde6dbfc92729d7f41feea95134849-chameleonhandraw-0.png"
-        alt=""
-      />
-      <p  className="text-white">Pergunta</p>
-      <input
-        type="text"
-        className="border-white border rounded-md bg-white text-black"
-        onChange={(e) => setQuestao(e.target.value)}
-      />
-      <br />
-      <br />
-      <p className="text-white">Tema</p>
-      <input
-        type="text"
-        className="border-white border rounded-md bg-white text-black"
-        onChange={(e) => setTema(e.target.value)}
-      />
+   <div className="min-h-screen bg-gradient-to-br from-[#0f0f1a] via-[#1a0f2e] to-[#2a0f3a] flex flex-col items-center p-6">
 
-      <br />
-      <br />
+  {/* Header */}
+  <div className="w-full max-w-2xl mb-6 text-center">
+    <h1 className="text-4xl font-bold text-purple-400">Adaptil</h1>
+    <p className="text-gray-400 mt-2">Adaptador inteligente de questões</p>
+  </div>
 
-{perguntando ? (
-  <p className="text-pink-600">Pergunta sendo feita...</p>
-) : (
-  <button
-    onClick={main}
-    className="cursor-crosshair bg-green-300 rounded-md hover:bg-blue-400"
-  >
-    Perguntar
-  </button>
-)}
+  {/* Card principal */}
+  <div className="w-full max-w-2xl bg-[#1c1c2b] rounded-2xl shadow-lg p-6 border border-purple-900">
 
-     
-      <hr />
-      <br />
-      <br />
-      <h1 className="text-4xl text-red-600"> {title}</h1>
-      <br />
-      <h2 className="text-2xl text-green-600"> {text}</h2>
-      <br />
-<div className="text-teal-500">
-  {respostas.map((resp, i) => (
+    {/* Inputs */}
+    <div className="space-y-4">
+      
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">
+          Pergunta base
+        </label>
+        <input
+          type="text"
+          className="w-full p-3 rounded-lg bg-[#0f0f1a] border border-purple-800 text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+          onChange={(e) => setQuestao(e.target.value)}
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">
+          Tema
+        </label>
+        <input
+          type="text"
+          className="w-full p-3 rounded-lg bg-[#0f0f1a] border border-purple-800 text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+          onChange={(e) => setTema(e.target.value)}
+        />
+      </div>
+
+      <button
+        onClick={main}
+        className="w-full py-3 rounded-lg bg-purple-700 hover:bg-purple-600 transition text-white font-semibold"
+      >
+        {perguntando ? "Gerando pergunta..." : "Gerar pergunta"}
+      </button>
+    </div>
+
+    {/* Pergunta */}
+    <div className="mt-8">
+      <h2 className="text-2xl font-semibold text-purple-300">
+        {title}
+      </h2>
+
+      <p className="text-gray-300 mt-3">
+        {text}
+      </p>
+    </div>
+
+    {/* Respostas */}
+    <div className="mt-6 space-y-3">
+      {respostas.map((resp, i) => (
+        <button
+          key={i}
+          onClick={() => setRespostaEscolhida(i)}
+          className={`w-full text-left p-3 rounded-lg border transition
+          ${
+            respostaEscolhida === i
+              ? "bg-purple-700 border-purple-500 text-white"
+              : "bg-[#0f0f1a] border-gray-700 text-gray-300 hover:border-purple-500"
+          }`}
+        >
+          {resp}
+        </button>
+      ))}
+    </div>
+
+    {/* Ação */}
     <button
-      key={i}
-      onClick={() => setRespostaEscolhida(i)}
-      className={`block w-full text-left p-2 rounded-md mb-2 
-        ${respostaEscolhida === i ? "bg-blue-400" : "bg-gray-200"}
-      `}
+      onClick={() => verificarResposta(respostaEscolhida, correta)}
+      className="w-full mt-6 py-3 rounded-lg bg-green-600 hover:bg-green-500 transition text-white font-semibold"
     >
-      {resp}
+      Verificar resposta
     </button>
-  ))}
-</div>
 
-<button onClick={(e)=>verificarResposta(respostaEscolhida, correta)}>Responder</button>
+  </div>
 </div>
   );
 }
