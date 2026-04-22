@@ -145,7 +145,7 @@ if (escolhida===correta){
     {/* Ação */}
     <button
       onClick={() => verificarResposta(respostaEscolhida, correta)}
-      className="w-full mt-6 py-3 rounded-lg bg-green-600 hover:bg-green-500 transition text-white font-semibold"
+      className="w-full mt-6 py-3 rounded-lg bg-green-600 hover:bg-green-400 transition text-white font-semibold"
     >
       Verificar resposta
     </button>
