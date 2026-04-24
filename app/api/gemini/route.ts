@@ -1,66 +1,81 @@
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.GEMINI_API_KEY;
+const apiKey = process.env.GEMINI_API_KEY!;
 
-if (!apiKey) {
-  throw new Error("GEMINI_API_KEY não definida");
+const ai = new GoogleGenAI({ apiKey });
+
+const MODELS = [
+  "models/gemini-3-flash-preview",
+  "models/gemini-2.0-flash",
+  "models/gemini-1.5-flash",
+];
+
+async function gerarComFallback(contents: any) {
+  for (const model of MODELS) {
+    try {
+      console.log("Tentando modelo:", model);
+
+      const response = await ai.models.generateContent({
+        model,
+        contents,
+      });
+
+      return response;
+    } catch (err: any) {
+      if (err?.status === 503) {
+        console.log("Modelo ocupado, tentando próximo...");
+        continue;
+      }
+
+      throw err;
+    }
+  }
+
+  throw new Error("Todos os modelos falharam");
 }
 
-const ai = new GoogleGenAI({
-  apiKey,
-});
-
 export async function POST(request: Request) {
-  const body = await request.json();
-  const questao = body.questao;
-  const tema = body.tema;
+  try {
+    const body = await request.json();
+    const { questao, tema } = body;
 
-
-  
-  const response = await ai.models.generateContent({
-    model: "models/gemini-3-flash-preview",
-    contents: [
+    const contents = [
       {
         role: "user",
         parts: [
           {
-     text:
-`Adapte a questão para o tema: ${tema}.
-
+            text: `Adapte a questão para o tema: ${tema}.
 REGRAS CRÍTICAS:
 - NÃO alterar pergunta.
-- NÃO alterar alternativas (copiar EXATAMENTE).
+- NÃO alterar alternativas.
 - NÃO alterar resposta correta.
-- NÃO alterar números ou lógica.
-- Apenas adaptar o contexto.
 
-ALTERNATIVAS:
-- Copiar exatamente como estão.
-- NÃO recalcular ou corrigir.
-
-RESPOSTA CORRETA:
-- Identificar qual alternativa já é correta na questão original.
-- Retornar o ÍNDICE (base 0).
-- NÃO inventar.
-
-FORMATO (uma linha):
+FORMATO:
 titulo # corpo # alt1 § alt2 § alt3 § alt4 # correta:indice
-
-REGRAS:
-- NÃO usar quebra de linha
-- NÃO adicionar explicações
-- EXATAMENTE 3 "#" e 3 "§"
 
 Questão:
 ${questao}`,
           },
         ],
       },
-    ],
-  });
+    ];
 
-  const text =
-    response.candidates?.[0]?.content?.parts?.[0]?.text ?? "Sem resposta";
+    const response = await gerarComFallback(contents);
 
-  return Response.json({ text });
+    const text =
+      response.candidates?.[0]?.content?.parts?.[0]?.text ??
+      "Sem resposta";
+
+    return Response.json({ text });
+  } catch (err: any) {
+    console.error("Erro API:", err);
+
+    return new Response(
+      JSON.stringify({
+        error: "Erro ao gerar questão",
+        detalhe: err?.message,
+      }),
+      { status: 500 }
+    );
+  }
 }
