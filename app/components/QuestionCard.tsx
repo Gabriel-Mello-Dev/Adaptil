@@ -11,18 +11,14 @@ type Props = {
   setTema: (v: string) => void;
 };
 
+import Header from "./header"
+
 export default function QuestionCard(props: Props) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f0f1a] via-[#1a0f2e] to-[#2a0f3a] flex flex-col items-center p-6">
 
-      {/* Header */}
-      <div className="w-full max-w-2xl mb-6 text-center">
-        <h1 className="text-4xl font-bold text-purple-400">Adaptil</h1>
-        <p className="text-gray-400 mt-2">
-          Adaptador inteligente de questões
-        </p>
-      </div>
-
+    
+<Header></Header>
       {/* Card */}
       <div className="w-full max-w-2xl bg-[#1c1c2b] rounded-2xl shadow-lg p-6 border border-purple-900">
 
