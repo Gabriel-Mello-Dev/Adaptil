@@ -10,7 +10,7 @@ const socket: Socket = io(socketServer);
 export default function Home() {
   const [mensagem, setMensagem] = useState("");
   const [mensagens, setMensagens] = useState<string[]>([]);
-
+  const userName = "Gabreiel teste";
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Conectado:", socket.id);
@@ -29,7 +29,7 @@ export default function Home() {
   function enviarMensagem() {
     if (!mensagem.trim()) return;
     console.log("enviado");
-    socket.emit("mensagem", mensagem);
+    socket.emit("mensagem", `${userName}: ${mensagem}`);
 
     setMensagem("");
   }
