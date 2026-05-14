@@ -1,56 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import Link from "next/link";
 
-const socketServer = process.env.NEXT_PUBLIC_SOCKET_SERVER!;
-
-const socket: Socket = io(socketServer);
-
-export default function Home() {
-  const [mensagem, setMensagem] = useState("");
-  const [mensagens, setMensagens] = useState<string[]>([]);
-  const userName = "Gabreiel teste";
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Conectado:", socket.id);
-    });
-
-    socket.on("mensagem", (msg: string) => {
-      setMensagens((prev) => [...prev, msg]);
-      console.log(mensagens);
-    });
-
-    return () => {
-      socket.off("mensagem");
-    };
-  }, []);
-
-  function enviarMensagem() {
-    if (!mensagem.trim()) return;
-    console.log("enviado");
-    socket.emit("mensagem", `${userName}: ${mensagem}`);
-
-    setMensagem("");
-  }
-
+export default function RoomMenuPage() {
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Chat Socket.IO</h1>
+    <main className="min-h-screen flex items-center justify-center bg-zinc-950 text-white">
+      <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl p-8 shadow-xl">
+        <h1 className="text-3xl font-bold mb-6 text-center">Salas</h1>
 
-      <input
-        value={mensagem}
-        onChange={(e) => setMensagem(e.target.value)}
-        placeholder="Digite..."
-      />
+        <div className="flex flex-col gap-4">
+          <Link href="/pages/Room/Create">
+            <button className="w-full bg-blue-600 hover:bg-blue-500 transition-colors rounded-xl py-3 font-medium cursor-pointer">
+              Criar Sala
+            </button>
+          </Link>
 
-      <button onClick={enviarMensagem}>Enviar</button>
-
-      <hr />
-
-      {mensagens.map((msg, index) => (
-        <p key={index}>{msg}</p>
-      ))}
-    </div>
+          <Link href="/pages/Room/Entry">
+            <button className="w-full bg-zinc-800 hover:bg-zinc-700 transition-colors rounded-xl py-3 font-medium cursor-pointer">
+              Entrar em Sala
+            </button>
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }
